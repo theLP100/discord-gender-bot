@@ -7,42 +7,52 @@ from dotenv import load_dotenv
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
-intents = discord.Intents(messages=True, guilds=True)
-intents.members = True
-intents.message_content = True
 
-bot = commands.Bot(command_prefix='>', intents = intents)
+class SimpleView(discord.ui.View):
 
-@bot.command(name='hi', help='prints hello world to greet you')
-async def hello_world(ctx):
-    response = "Hello World"
-    await ctx.send(response)
+    @discord.ui.button(label="Hello", style=discord.ButtonStyle.success)
+    async def hello(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message("World")
+        self.stop()
 
-@bot.command(name='ask-pronouns', help='will ask user to click their pronouns and will add this to their nickname')
-async def ask_pronouns(ctx):
-    response = {"content": "This is a message with components:", "components": [
-        {
-            "type": 1,
-            "components": []
-        }
-    ]}
-    await ctx.send(response)
-bot.run(TOKEN)
+    @discord.ui.button(label="Cancel", style=discord.ButtonStyle.red)
+    async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message("Cancelling")
+        self.stop()
 
 
+def run():
+    intents = discord.Intents(messages=True, guilds=True)
+    intents.members = True
+    intents.message_content = True
 
-# client = discord.Client(intents = intents)
+    bot = commands.Bot(command_prefix='>', intents = intents)
 
-# @client.event
-# async def on_ready():
-#     print(f'{client.user} has connected to Discord!')
+    @bot.command(name='hi', help='prints hello world to greet you')
+    async def hello_world(ctx):
+        response = "Hello World"
+        await ctx.send(response)
 
-# @client.event
-# async def on_message(message):
-#     if message.content.startswith('>hi'):
-#         await message.channel.send('Hello World!')
+    @bot.command(name='ask-pronouns', help='will ask user to click their pronouns and will add this to their nickname')
+    async def ask_pronouns(ctx):
+        response = {
+            "content": "This is a message with components:", 
+            "components": [
+            {
+                "type": 1,
+                "components": []
+            }
+        ]}
+        await ctx.send(response)
 
-#     elif message.content.startswith('>ask-pronouns'):
-#         await message.channel.send('Initiating pronoun asking sequence.')
+    @bot.command(name='button', help="we're testing buttons here")
+    async def button(ctx):
+        view = SimpleView()
+        await ctx.send(view=view)
+        
 
-# client.run(TOKEN)
+
+    bot.run(TOKEN, root_logger=True)
+
+if __name__ == "__main__":
+    run()
