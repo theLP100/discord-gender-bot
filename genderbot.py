@@ -33,24 +33,10 @@ def run():
         response = "Hello World"
         await ctx.send(response)
 
-    @bot.command(name='ask-pronouns', help='will ask user to click their pronouns and will add this to their nickname')
-    async def ask_pronouns(ctx):
-        response = {
-            "content": "This is a message with components:", 
-            "components": [
-            {
-                "type": 1,
-                "components": []
-            }
-        ]}
-        await ctx.send(response)
-
     @bot.command(name='button', help="we're testing buttons here")
     async def button(ctx):
         view = SimpleView()
         await ctx.send(view=view)
-        
-
 
     bot.run(TOKEN, root_logger=True)
 
